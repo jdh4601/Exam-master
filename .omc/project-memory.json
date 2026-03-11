@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1773210286593,
+  "projectRoot": "/Users/jayden/claude-skills",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "skills": {
+      "path": "skills",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1773210286584,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "README.md",
+      "accessCount": 2,
+      "lastAccessed": 1773210504315,
+      "type": "file"
+    },
+    {
+      "path": "skills/exam-master/README.md",
+      "accessCount": 1,
+      "lastAccessed": 1773210458454,
+      "type": "file"
+    },
+    {
+      "path": "skills/pdf-to-markdown/README.md",
+      "accessCount": 1,
+      "lastAccessed": 1773210458713,
+      "type": "file"
+    },
+    {
+      "path": "skills/exam-master/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773210459138,
+      "type": "file"
+    },
+    {
+      "path": "skills/pdf-to-markdown/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773210459431,
+      "type": "file"
+    },
+    {
+      "path": "README.ko.md",
+      "accessCount": 1,
+      "lastAccessed": 1773210554837,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
