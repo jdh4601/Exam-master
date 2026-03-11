@@ -20,10 +20,7 @@ A collection of custom skills for [Claude Code](https://claude.ai/code), install
 Before installing any skill, make sure you have the following:
 
 - **[Claude Code](https://claude.ai/code)** — the AI coding assistant this skill system runs on
-- **[oh-my-claudecode](https://github.com/chiper-inc/oh-my-claudecode)** — provides the skill runtime that powers `/skill-name` commands
 - **Python 3.9+** — required for `pdf-to-markdown` only
-
-> If you haven't set up oh-my-claudecode yet, run `/oh-my-claudecode:omc-setup` inside Claude Code first.
 
 ---
 

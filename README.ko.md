@@ -20,10 +20,7 @@
 스킬을 설치하기 전에 아래 항목을 먼저 준비해주세요.
 
 - **[Claude Code](https://claude.ai/code)** — 스킬이 실행되는 AI 코딩 도구
-- **[oh-my-claudecode](https://github.com/chiper-inc/oh-my-claudecode)** — `/스킬이름` 명령어를 가능하게 해주는 스킬 런타임
 - **Python 3.9+** — `pdf-to-markdown` 스킬에만 필요
-
-> oh-my-claudecode를 아직 설정하지 않았다면, Claude Code 내에서 `/oh-my-claudecode:omc-setup`을 먼저 실행해주세요.
 
 ---
 
