@@ -36,10 +36,10 @@ npm install -g skills
 
 ```bash
 # 시험 준비 스킬
-npx skills add Donghyun-Jeong/claude-skills@exam-master
+npx skills add jdh4601/Exam-master@exam-master
 
 # PDF → Markdown 변환 스킬
-npx skills add Donghyun-Jeong/claude-skills@pdf-to-markdown
+npx skills add jdh4601/Exam-master@pdf-to-markdown
 ```
 
 ### 3. Claude Code에서 바로 사용
