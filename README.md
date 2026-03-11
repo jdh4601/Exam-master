@@ -12,6 +12,7 @@ A collection of custom skills for [Claude Code](https://claude.ai/code), install
 |-------|-------------|
 | [exam-master](skills/exam-master/) | Adaptive exam prep powered by reinforcement learning + cognitive science |
 | [pdf-to-markdown](skills/pdf-to-markdown/) | Convert password-protected PDFs into clean, structured Markdown |
+| [pptx-to-markdown](skills/pptx-to-markdown/) | Convert PowerPoint slides into structured Markdown with speaker notes |
 
 ---
 
@@ -20,7 +21,7 @@ A collection of custom skills for [Claude Code](https://claude.ai/code), install
 Before installing any skill, make sure you have the following:
 
 - **[Claude Code](https://claude.ai/code)** — the AI coding assistant this skill system runs on
-- **Python 3.9+** — required for `pdf-to-markdown` only
+- **Python 3.9+** — required for `pdf-to-markdown` and `pptx-to-markdown`
 
 ---
 
@@ -40,6 +41,9 @@ npx skills add jdh4601/Exam-master@exam-master
 
 # PDF → Markdown conversion skill
 npx skills add jdh4601/Exam-master@pdf-to-markdown
+
+# PowerPoint → Markdown conversion skill
+npx skills add jdh4601/Exam-master@pptx-to-markdown
 ```
 
 ### 3. Use them in Claude Code
@@ -47,6 +51,7 @@ npx skills add jdh4601/Exam-master@pdf-to-markdown
 ```
 /exam-master /path/to/lecture-notes/
 /pdf-to-markdown lecture.pdf -p "PASSWORD"
+/pptx-to-markdown lecture.pptx
 ```
 
 That's it. Skills are ready to use immediately after installation.
@@ -187,13 +192,80 @@ Python dependencies (`pdfplumber`, `pypdf`) are **auto-installed on first run** 
 
 ---
 
+### pptx-to-markdown
+
+> Convert PowerPoint slides into structured Markdown with speaker notes
+
+`pptx-to-markdown` extracts the full content of a `.pptx` file — slide titles, bullet points, tables, and speaker notes — and renders it as a clean, structured `.md` file ready for `exam-master` or any other tool.
+
+#### Conversion pipeline
+
+```
+PPTX → load → extract per slide → clean → raw .md → Claude refinement → final .md
+```
+
+1. **Load** — opens the `.pptx` file via `python-pptx`
+2. **Extract** — processes each slide:
+   - Title placeholder → `## Slide N: Title`
+   - Body bullets → nested lists using indent level (`-`, `  -`)
+   - Subtitle → italic paragraph
+   - Tables → Markdown pipe tables
+   - Images / Charts → `[이미지: name]` / `[차트: name]` placeholders
+   - Speaker notes → `> **Notes:** ...` blockquote
+3. **Clean** — removes empty slides, normalizes whitespace
+4. **Claude refinement** — Claude reads the raw output and fixes heading hierarchy, list nesting, and table formatting
+
+#### Usage
+
+**Single file:**
+```
+/pptx-to-markdown lecture.pptx
+```
+
+**Or run the script directly:**
+```bash
+# Single file
+python3 ~/.claude/skills/pptx-to-markdown/scripts/convert_pptx.py \
+  -i lecture.pptx -o lecture.md
+
+# Batch convert entire folder
+python3 ~/.claude/skills/pptx-to-markdown/scripts/convert_pptx.py \
+  --input-dir ./slides/ --output-dir ./markdown/
+
+# Specific slide range
+python3 ~/.claude/skills/pptx-to-markdown/scripts/convert_pptx.py \
+  -i lecture.pptx --slides 1-30
+
+# Exclude speaker notes
+python3 ~/.claude/skills/pptx-to-markdown/scripts/convert_pptx.py \
+  -i lecture.pptx --no-notes
+```
+
+#### CLI options
+
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--input` | `-i` | Input PPTX file path |
+| `--input-dir` | | Batch mode: input directory |
+| `--output` | `-o` | Output Markdown file path |
+| `--output-dir` | | Batch mode: output directory |
+| `--slides` | | Slide range (e.g. `1-30`) |
+| `--no-notes` | | Exclude speaker notes |
+
+#### Dependencies
+
+Python dependency (`python-pptx`) is **auto-installed on first run** — no manual setup needed.
+
+---
+
 ## Recommended workflow
 
-If you have encrypted PDF lecture slides and an upcoming exam:
+If you have lecture slides (PDF or PPTX) and an upcoming exam:
 
 ```bash
-# Step 1: Convert all PDFs to Markdown
-/pdf-to-markdown ./lectures/ -p "yourpassword"
+# Step 1: Convert slides to Markdown
+/pdf-to-markdown ./lectures/ -p "yourpassword"   # encrypted PDFs
+/pptx-to-markdown ./slides/                      # PowerPoint files
 
 # Step 2: Start adaptive exam prep
 /exam-master ./lectures/

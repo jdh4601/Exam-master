@@ -12,6 +12,7 @@
 |------|------|
 | [exam-master](skills/exam-master/) | 강화학습 + 인지과학 기반 적응형 시험 준비 |
 | [pdf-to-markdown](skills/pdf-to-markdown/) | 암호화 PDF → 구조화 Markdown 자동 변환 |
+| [pptx-to-markdown](skills/pptx-to-markdown/) | PowerPoint 슬라이드 → 발표자 노트 포함 구조화 Markdown 변환 |
 
 ---
 
@@ -20,7 +21,7 @@
 스킬을 설치하기 전에 아래 항목을 먼저 준비해주세요.
 
 - **[Claude Code](https://claude.ai/code)** — 스킬이 실행되는 AI 코딩 도구
-- **Python 3.9+** — `pdf-to-markdown` 스킬에만 필요
+- **Python 3.9+** — `pdf-to-markdown`, `pptx-to-markdown` 스킬에 필요
 
 ---
 
@@ -40,6 +41,9 @@ npx skills add jdh4601/Exam-master@exam-master
 
 # PDF → Markdown 변환 스킬
 npx skills add jdh4601/Exam-master@pdf-to-markdown
+
+# PowerPoint → Markdown 변환 스킬
+npx skills add jdh4601/Exam-master@pptx-to-markdown
 ```
 
 ### 3. Claude Code에서 바로 사용
@@ -47,6 +51,7 @@ npx skills add jdh4601/Exam-master@pdf-to-markdown
 ```
 /exam-master /강의자료/경로/
 /pdf-to-markdown lecture.pdf -p "비밀번호"
+/pptx-to-markdown lecture.pptx
 ```
 
 설치 후 즉시 사용할 수 있습니다.
@@ -187,13 +192,80 @@ Python 의존성(`pdfplumber`, `pypdf`)은 **첫 실행 시 자동으로 설치*
 
 ---
 
+### pptx-to-markdown
+
+> PowerPoint 슬라이드를 발표자 노트 포함 구조화 Markdown으로 자동 변환
+
+`pptx-to-markdown`은 `.pptx` 파일의 전체 내용 — 슬라이드 제목, 불릿, 테이블, 발표자 노트 — 을 추출해 `exam-master`나 다른 도구에서 바로 활용할 수 있는 `.md` 파일로 변환합니다.
+
+#### 변환 파이프라인
+
+```
+PPTX → load → extract per slide → clean → raw .md → Claude 정제 → 최종 .md
+```
+
+1. **Load** — `python-pptx`로 `.pptx` 파일 열기
+2. **Extract** — 슬라이드별 구조 추출:
+   - Title placeholder → `## Slide N: 제목`
+   - Body bullet → indent level 기반 중첩 리스트 (`-`, `  -`)
+   - Subtitle → 이탤릭 단락
+   - Table → Markdown 파이프 테이블
+   - 이미지 / 차트 → `[이미지: 이름]` / `[차트: 이름]` 플레이스홀더
+   - 발표자 노트 → `> **Notes:** ...` 블록쿼트
+3. **Clean** — 빈 슬라이드 제거, 공백 정규화
+4. **Claude 정제** — Claude가 raw 출력물을 읽고 헤딩 계층, 리스트 중첩, 테이블 형식을 최종 정리
+
+#### 사용법
+
+**기본 (Claude Code에서):**
+```
+/pptx-to-markdown lecture.pptx
+```
+
+**스크립트 직접 실행:**
+```bash
+# 단일 파일
+python3 ~/.claude/skills/pptx-to-markdown/scripts/convert_pptx.py \
+  -i lecture.pptx -o lecture.md
+
+# 폴더 내 모든 PPTX 배치 변환
+python3 ~/.claude/skills/pptx-to-markdown/scripts/convert_pptx.py \
+  --input-dir ./slides/ --output-dir ./markdown/
+
+# 슬라이드 범위 지정
+python3 ~/.claude/skills/pptx-to-markdown/scripts/convert_pptx.py \
+  -i lecture.pptx --slides 1-30
+
+# 발표자 노트 제외
+python3 ~/.claude/skills/pptx-to-markdown/scripts/convert_pptx.py \
+  -i lecture.pptx --no-notes
+```
+
+#### CLI 옵션
+
+| 옵션 | 단축 | 설명 |
+|------|------|------|
+| `--input` | `-i` | 입력 PPTX 파일 경로 |
+| `--input-dir` | | 배치 모드: 입력 디렉토리 |
+| `--output` | `-o` | 출력 Markdown 파일 경로 |
+| `--output-dir` | | 배치 모드: 출력 디렉토리 |
+| `--slides` | | 슬라이드 범위 (예: `1-30`) |
+| `--no-notes` | | 발표자 노트 제외 |
+
+#### 의존성
+
+Python 의존성(`python-pptx`)은 **첫 실행 시 자동으로 설치**됩니다. 별도 설정이 필요 없습니다.
+
+---
+
 ## 추천 워크플로우
 
-암호화된 PDF 강의 자료가 있고 시험이 다가오고 있다면:
+PDF나 PPTX 강의 자료가 있고 시험이 다가오고 있다면:
 
 ```bash
-# Step 1: 모든 PDF를 Markdown으로 변환
-/pdf-to-markdown ./강의자료/ -p "비밀번호"
+# Step 1: 강의 자료를 Markdown으로 변환
+/pdf-to-markdown ./강의자료/ -p "비밀번호"   # 암호화 PDF
+/pptx-to-markdown ./슬라이드/               # PowerPoint 파일
 
 # Step 2: 적응형 시험 준비 시작
 /exam-master ./강의자료/
